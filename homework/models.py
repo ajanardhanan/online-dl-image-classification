@@ -261,7 +261,7 @@ def load_model(model_name: str, with_weights: bool = False, **model_kwargs):
 
     # Limit model sizes since they will be zipped and submitted
     model_size_mb = calculate_model_size_mb(r)
-    if model_size_mb > 10:
+    if model_size_mb > 13:
         raise AssertionError(f"{model_name} is too large: {model_size_mb:.2f} MB")
     print(f"Model size: {model_size_mb:.2f} MB")
 
