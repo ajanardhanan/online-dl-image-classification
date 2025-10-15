@@ -68,6 +68,7 @@ class MLPClassifier(nn.Module):
         h: int = 64,
         w: int = 64,
         num_classes: int = 6,
+        hidden_dim: int = 128
     ):
         """
         An MLP with a single hidden layer
@@ -109,6 +110,7 @@ class MLPClassifierDeep(nn.Module):
         h: int = 64,
         w: int = 64,
         num_classes: int = 6,
+        hidden_dim: int = 128
     ):
         """
         An MLP with multiple hidden layers
@@ -130,7 +132,7 @@ class MLPClassifierDeep(nn.Module):
 
         num_layers =3
         num_classes = 6
-        hidden_dim = 128
+        #hidden_dim = 128
         for _ in range(num_layers-1):
             layers.append(nn.ReLU(hidden_dim))
             layers.append(nn.Linear(256,256))
@@ -174,6 +176,7 @@ class MLPClassifierDeepResidual(nn.Module):
         h: int = 64,
         w: int = 64,
         num_classes: int = 6,
+        hidden_dim: int = 128
     ):
         """
         Args:
@@ -185,7 +188,7 @@ class MLPClassifierDeepResidual(nn.Module):
             hidden_dim: int, size of hidden layers
             num_layers: int, number of hidden layers
         """
-        hidden_dim = 128
+        #hidden_dim = 128
         num_layers = 3
         num_classes = 6
         super().__init__()
