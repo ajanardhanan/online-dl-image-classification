@@ -80,9 +80,8 @@ class MLPClassifier(nn.Module):
         """
         super().__init__()
         input_features = 3 * h * w
-        hidden_features = 128
-        self.fc1 = nn.Linear(input_features,hidden_features)
-        self.fc2 =  nn.Linear(hidden_features,input_features)
+        self.fc1 = nn.Linear(input_features,hidden_dim)
+        self.fc2 =  nn.Linear(hidden_dim,num_classes)
         self.relu = nn.ReLU()
         #raise NotImplementedError("MLPClassifier.__init__() is not implemented")
 
@@ -127,15 +126,15 @@ class MLPClassifierDeep(nn.Module):
         super().__init__()
         input_features = 3 * h * w
         layers = []
-        layers.append(nn.Linear(input_features,256))
+        layers.append(nn.Linear(input_features,hidden_dim))
         layers.append(nn.ReLU())
 
         num_layers =3
         num_classes = 6
         #hidden_dim = 128
         for _ in range(num_layers-1):
-            layers.append(nn.ReLU(hidden_dim))
-            layers.append(nn.Linear(256,256))
+            layers.append(nn.Linear(hidden_dim,hidden_dim))
+            layers.append(nn.ReLU())
     
         layers.append(nn.Linear(hidden_dim,num_classes))
         self.network = nn.Sequential(*layers)
