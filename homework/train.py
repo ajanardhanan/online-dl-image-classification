@@ -45,7 +45,7 @@ def train(
 
     # create loss function and optimizer
     loss_func = ClassificationLoss()
-    # optimizer = ...
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     global_step = 0
     metrics = {"train_acc": [], "val_acc": []}
@@ -62,25 +62,42 @@ def train(
             img, label = img.to(device), label.to(device)
 
             # TODO: implement training step
-            raise NotImplementedError("Training step not implemented")
-
+            # raise NotImplementedError("Training step not implemented")
+            optimizer.zero_grad();
+            logits = model(img);
+            loss = loss_func(logits,label);
+            loss.backward();
+            optimizer.step();
+            logger.add_scalar("train_loss", loss.item(), global_step);
+            pred = logits.argmax(dim=1);
+            acc = (pred == label).float().mean();
+            metrics["train_acc"].append(acc.item());
             global_step += 1
 
         # disable gradient computation and switch to evaluation mode
         with torch.inference_mode():
             model.eval()
-
             for img, label in val_data:
                 img, label = img.to(device), label.to(device)
+                logits = model(img);
+                pred = logits.argmax(dim=1);
+                acc = (pred == label).float().mean();
+                metrics["val_acc"].append(acc.item());
 
                 # TODO: compute validation accuracy
-                raise NotImplementedError("Validation accuracy not implemented")
+                # raise NotImplementedError("Validation accuracy not implemented")
 
         # log average train and val accuracy to tensorboard
         epoch_train_acc = torch.as_tensor(metrics["train_acc"]).mean()
         epoch_val_acc = torch.as_tensor(metrics["val_acc"]).mean()
 
-        raise NotImplementedError("Logging not implemented")
+        #raise NotImplementedError("Logging not implemented")
+        epoch_train_acc = torch.as_tensor(metrics["train_acc"]).mean()
+        epoch_val_acc = torch.as_tensor(metrics["val_acc"]).mean()
+
+        logger.add_scalar("train_accuracy", epoch_train_acc.item(), global_step=global_step)
+        logger.add_scalar("val_accuracy", epoch_val_acc.item()  , global_step=global_step)   
+
 
         # print on first, last, every 10th epoch
         if epoch == 0 or epoch == num_epoch - 1 or (epoch + 1) % 10 == 0:
