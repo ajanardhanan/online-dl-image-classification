@@ -32,7 +32,7 @@ def test_logging(logger: tb.SummaryWriter):
             # TODO: log train_loss
             logger.add_scalar("train_loss", dummy_train_loss, global_step)
             # TODO: save additional metrics to be averaged
-            metrics["train_acc"].append(dummy_train_accuracy.item())
+            metrics["train_acc"].append(dummy_train_accuracy.mean().item())
             
             global_step += 1
 
@@ -44,7 +44,7 @@ def test_logging(logger: tb.SummaryWriter):
         torch.manual_seed(epoch)
         for _ in range(10):
             dummy_validation_accuracy = epoch / 10.0 + torch.randn(10)
-            metrics["val_acc"].append(dummy_validation_accuracy.item())
+            metrics["val_acc"].append(dummy_validation_accuracy.mean().item())
             # TODO: save additional metrics to be averaged
 
         # TODO: log average val_accuracy

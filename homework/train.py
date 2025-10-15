@@ -6,8 +6,8 @@ import numpy as np
 import torch
 import torch.utils.tensorboard as tb
 
-from .models import ClassificationLoss, load_model, save_model
-from .utils import load_data
+from models import ClassificationLoss, load_model, save_model
+from utils import load_data
 
 
 def train(
@@ -63,15 +63,15 @@ def train(
 
             # TODO: implement training step
             # raise NotImplementedError("Training step not implemented")
-            optimizer.zero_grad();
-            logits = model(img);
-            loss = loss_func(logits,label);
-            loss.backward();
-            optimizer.step();
-            logger.add_scalar("train_loss", loss.item(), global_step);
-            pred = logits.argmax(dim=1);
-            acc = (pred == label).float().mean();
-            metrics["train_acc"].append(acc.item());
+            optimizer.zero_grad()
+            logits = model(img)
+            loss = loss_func(logits,label)
+            loss.backward()
+            optimizer.step()
+            logger.add_scalar("train_loss", loss.item(), global_step)
+            pred = logits.argmax(dim=1)
+            acc = (pred == label).float().mean()
+            metrics["train_acc"].append(acc.item())
             global_step += 1
 
         # disable gradient computation and switch to evaluation mode
@@ -79,10 +79,10 @@ def train(
             model.eval()
             for img, label in val_data:
                 img, label = img.to(device), label.to(device)
-                logits = model(img);
-                pred = logits.argmax(dim=1);
-                acc = (pred == label).float().mean();
-                metrics["val_acc"].append(acc.item());
+                logits = model(img)
+                pred = logits.argmax(dim=1)
+                acc = (pred == label).float().mean()
+                metrics["val_acc"].append(acc.item())
 
                 # TODO: compute validation accuracy
                 # raise NotImplementedError("Validation accuracy not implemented")
