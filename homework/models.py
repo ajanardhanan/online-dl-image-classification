@@ -96,7 +96,7 @@ class MLPClassifier(nn.Module):
         x = x.flatten(start_dim=1)
         x =  self.fc1(x)
         x =  self.relu(x)
-        x = self.fc2(x)
+        #x = self.fc2(x)
         logits = self.fc2(x)
         return logits
         #raise NotImplementedError("MLPClassifier.forward() is not implemented")
@@ -130,8 +130,6 @@ class MLPClassifierDeep(nn.Module):
         layers.append(nn.ReLU())
 
         num_layers =3
-        num_classes = 6
-        #hidden_dim = 128
         for _ in range(num_layers-1):
             layers.append(nn.Linear(hidden_dim,hidden_dim))
             layers.append(nn.ReLU())
