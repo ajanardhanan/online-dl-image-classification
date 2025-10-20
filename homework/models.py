@@ -79,10 +79,10 @@ class MLPClassifier(nn.Module):
             num_classes: int, number of classes
         """
         super().__init__()
-        #input_features = 3 * h * w
-        #self.fc1 = nn.Linear(input_features,hidden_dim)
-        #self.fc2 =  nn.Linear(hidden_dim,num_classes)
-        #self.relu = nn.ReLU()
+        input_features = 3 * h * w
+        self.fc1 = nn.Linear(input_features,hidden_dim)
+        self.fc2 =  nn.Linear(hidden_dim,num_classes)
+        self.relu = nn.ReLU()
         self.model = nn.Sequential(
             nn.Linear(3*64*64, hidden_dim),
             nn.BatchNorm1d(hidden_dim),
