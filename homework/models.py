@@ -86,13 +86,13 @@ class MLPClassifier(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((16,16))  # reduce spatial dim
 
         self.model = nn.Sequential(
-            nn.Linear(3*16*16, hidden_dim),
+            nn.Linear(3*16*16, 128),
             nn.ReLU(),
             nn.Linear(128, 64),
             nn.ReLU(),
             #nn.ReLU(),
             #nn.Dropout(0.3),
-            nn.Linear(hidden_dim, num_classes)
+            nn.Linear(64, num_classes)
         )
         #raise NotImplementedError("MLPClassifier.__init__() is not implemented")
 
@@ -104,6 +104,7 @@ class MLPClassifier(nn.Module):
         Returns:
             tensor (b, num_classes) logits
         """
+        x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         return self.model(x)
         #x = x.flatten(start_dim=1)
