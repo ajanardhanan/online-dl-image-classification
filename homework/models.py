@@ -171,7 +171,8 @@ class ResidualBlock(nn.Module):
         super().__init__()
         self.block = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
-            nn.BatchNorm1d(hidden_dim),
+            nn.LayerNorm(hidden_dim),
+            #nn.BatchNorm1d(hidden_dim),
             nn.ReLU(),
             nn.Dropout(0.2),
             nn.Linear(hidden_dim, hidden_dim),
@@ -212,7 +213,8 @@ class MLPClassifierDeepResidual(nn.Module):
         # Input layer
         self.input_layer = nn.Sequential(
             nn.Linear(input_features, hidden_dim),
-            nn.BatchNorm1d(hidden_dim),
+            nn.LayerNorm(hidden_dim),
+            #nn.BatchNorm1d(hidden_dim),
             nn.ReLU()
         )
 
