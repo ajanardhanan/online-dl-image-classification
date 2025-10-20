@@ -68,7 +68,7 @@ class MLPClassifier(nn.Module):
         h: int = 64,
         w: int = 64,
         num_classes: int = 6,
-        hidden_dim: int = 128
+        hidden_dim: int = 64
     ):
         """
         An MLP with a single hidden layer
@@ -79,15 +79,17 @@ class MLPClassifier(nn.Module):
             num_classes: int, number of classes
         """
         super().__init__()
-        input_features = 3 * h * w
-        self.fc1 = nn.Linear(input_features,hidden_dim)
-        self.fc2 =  nn.Linear(hidden_dim,num_classes)
-        self.relu = nn.ReLU()
+        #input_features = 3 * h * w
+        #self.fc1 = nn.Linear(input_features,hidden_dim)
+        #self.fc2 =  nn.Linear(hidden_dim,num_classes)
+        #self.relu = nn.ReLU()
         self.model = nn.Sequential(
             nn.Linear(3*64*64, hidden_dim),
-            nn.BatchNorm1d(hidden_dim),
             nn.ReLU(),
-            nn.Dropout(0.3),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            #nn.ReLU(),
+            #nn.Dropout(0.3),
             nn.Linear(hidden_dim, num_classes)
         )
         #raise NotImplementedError("MLPClassifier.__init__() is not implemented")
@@ -118,7 +120,7 @@ class MLPClassifierDeep(nn.Module):
         h: int = 64,
         w: int = 64,
         num_classes: int = 6,
-        hidden_dim: int = 128
+        hidden_dim: int = 64
     ):
         """
         An MLP with multiple hidden layers
