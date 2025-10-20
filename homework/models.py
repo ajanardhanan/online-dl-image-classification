@@ -79,10 +79,17 @@ class MLPClassifier(nn.Module):
             num_classes: int, number of classes
         """
         super().__init__()
-        input_features = 3 * h * w
-        self.fc1 = nn.Linear(input_features,hidden_dim)
-        self.fc2 =  nn.Linear(hidden_dim,num_classes)
-        self.relu = nn.ReLU()
+        #input_features = 3 * h * w
+        #self.fc1 = nn.Linear(input_features,hidden_dim)
+        #self.fc2 =  nn.Linear(hidden_dim,num_classes)
+        #self.relu = nn.ReLU()
+        self.model = nn.Sequential(
+            nn.Linear(3*64*64, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(hidden_dim, num_classes)
+        )
         #raise NotImplementedError("MLPClassifier.__init__() is not implemented")
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -93,12 +100,14 @@ class MLPClassifier(nn.Module):
         Returns:
             tensor (b, num_classes) logits
         """
-        x = x.flatten(start_dim=1)
-        x =  self.fc1(x)
-        x =  self.relu(x)
-        #x = self.fc2(x)
-        logits = self.fc2(x)
-        return logits
+        x = x.view(x.size(0), -1)
+        return self.model(x)
+        #x = x.flatten(start_dim=1)
+        #x =  self.fc1(x)
+        #x =  self.relu(x)
+        ##x = self.fc2(x)
+        #logits = self.fc2(x)
+        #return logits
         #raise NotImplementedError("MLPClassifier.forward() is not implemented")
 
 
@@ -258,7 +267,7 @@ def load_model(model_name: str, with_weights: bool = False, **model_kwargs):
 
     # Limit model sizes since they will be zipped and submitted
     model_size_mb = calculate_model_size_mb(r)
-    if model_size_mb > 13:
+    if model_size_mb > 10:
         raise AssertionError(f"{model_name} is too large: {model_size_mb:.2f} MB")
     print(f"Model size: {model_size_mb:.2f} MB")
 
