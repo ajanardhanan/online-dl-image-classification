@@ -176,7 +176,7 @@ class ResidualBlock(nn.Module):
             nn.ReLU(),
             nn.Dropout(0.2),
             nn.Linear(hidden_dim, hidden_dim),
-            nn.BatchNorm1d(hidden_dim)
+            nn.LayerNorm(hidden_dim)
         )
         self.relu = nn.ReLU()
 
@@ -240,7 +240,7 @@ class MLPClassifierDeepResidual(nn.Module):
         Returns:
             tensor (b, num_classes) logits
         """
-                # Flatten image into vector
+        # Flatten image into vector
         x = x.view(x.size(0), -1)
         x = self.input_layer(x)
 
