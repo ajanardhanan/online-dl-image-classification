@@ -83,8 +83,10 @@ class MLPClassifier(nn.Module):
         #self.fc1 = nn.Linear(input_features,hidden_dim)
         #self.fc2 =  nn.Linear(hidden_dim,num_classes)
         #self.relu = nn.ReLU()
+        self.avgpool = nn.AdaptiveAvgPool2d((16,16))  # reduce spatial dim
+
         self.model = nn.Sequential(
-            nn.Linear(3*64*64, hidden_dim),
+            nn.Linear(3*16*16, hidden_dim),
             nn.ReLU(),
             nn.Linear(128, 64),
             nn.ReLU(),
