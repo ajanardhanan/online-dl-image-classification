@@ -167,19 +167,23 @@ class MLPClassifierDeep(nn.Module):
 
 
 class ResidualBlock(nn.Module):
-    """A residual block with skip connection"""
     def __init__(self, hidden_dim: int):
         super().__init__()
-        self.fc = nn.Linear(hidden_dim, hidden_dim)
+        self.block = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.BatchNorm1d(hidden_dim)
+        )
         self.relu = nn.ReLU()
-    
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # Residual connection: output = ReLU(FC(x)) + x
-        residual = x
-        x = self.fc(x)
-        x = self.relu(x)
-        x = x + residual  # Skip connection
-        return x
+
+    def forward(self, x):
+        # Residual connection: output = ReLU(x + F(x))
+        out = self.block(x)
+        out = out + x
+        return self.relu(out)
     
 class MLPClassifierDeepResidual(nn.Module):
     def __init__(
@@ -199,14 +203,31 @@ class MLPClassifierDeepResidual(nn.Module):
             hidden_dim: int, size of hidden layers
             num_layers: int, number of hidden layers
         """
-        #hidden_dim = 128
+        hidden_dim = 64
         num_layers = 3
         num_classes = 6
         super().__init__()
-        input_features = 3 * h * w
-        self.input_layer = nn.Sequential(nn.Linear(input_features,hidden_dim),nn.ReLU())
-        self.residual_layers = nn.ModuleList([ResidualBlock(hidden_dim) for _ in range(num_layers)])
-        self.output_layer = nn.Linear(hidden_dim,num_classes)
+        input_features = 3 * h * w  # for RGB image
+
+        # Input layer
+        self.input_layer = nn.Sequential(
+            nn.Linear(input_features, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU()
+        )
+
+        # Stack of residual blocks
+        self.residual_layers = nn.ModuleList(
+            [ResidualBlock(hidden_dim) for _ in range(num_layers)]
+        )
+
+        # Output layer
+        self.output_layer = nn.Linear(hidden_dim, num_classes)
+
+        #input_features = 3 * h * w
+        #self.input_layer = nn.Sequential(nn.Linear(input_features,hidden_dim),nn.ReLU())
+        #self.residual_layers = nn.ModuleList([ResidualBlock(hidden_dim) for _ in range(num_layers)])
+        #self.output_layer = nn.Linear(hidden_dim,num_classes)
         #raise NotImplementedError("MLPClassifierDeepResidual.__init__() is not implemented")
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -217,12 +238,24 @@ class MLPClassifierDeepResidual(nn.Module):
         Returns:
             tensor (b, num_classes) logits
         """
-        x = x.flatten(start_dim=1)
+                # Flatten image into vector
+        x = x.view(x.size(0), -1)
         x = self.input_layer(x)
+
+        # Pass through residual layers
         for layer in self.residual_layers:
             x = layer(x)
+
+        # Output logits
         logits = self.output_layer(x)
         return logits
+    
+        #x = x.flatten(start_dim=1)
+        #x = self.input_layer(x)
+        #for layer in self.residual_layers:
+        #    x = layer(x)
+        #logits = self.output_layer(x)
+        #return logits
         #raise NotImplementedError("MLPClassifierDeepResidual.forward() is not implemented")
 
 
